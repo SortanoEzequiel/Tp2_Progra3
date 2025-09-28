@@ -1,16 +1,34 @@
 package modelo;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class GrafoUsuarios {
-    private List<UsuarioMusical> usuarios = new ArrayList<>();
-    private List<Arista> aristas = new ArrayList<>();
+public class GrafoUsuarios extends Observable {
 
-    public void agregarUsuario(UsuarioMusical u) {
-        usuarios.add(u);
+    private List<UsuarioMusical> usuarios;
+    private List<Arista> aristas;
+    private List<Set<UsuarioMusical>> grupos; // dos grupos resultantes
+    private List<Observador> observadores;
+
+    public GrafoUsuarios() {
+        usuarios = new ArrayList<>();
+        aristas = new ArrayList<>();
+        grupos = new ArrayList<>();
+        observadores = new ArrayList<>();
     }
+    
+    public void addObserver(Observador obs) {
+        observadores.add(obs);
+    }
+    
+    public void agregarUsuario(UsuarioMusical usuario) {
+        usuarios.add(usuario);
+        recalcularAristas();
+        notificarCambio();
+    }
+   
 
-    public void construirGrafoCompleto() {
+    private void recalcularAristas() {
         aristas.clear();
         for (int i = 0; i < usuarios.size(); i++) {
             for (int j = i + 1; j < usuarios.size(); j++) {
@@ -19,49 +37,129 @@ public class GrafoUsuarios {
         }
     }
 
-    public List<Arista> obtenerAGMKruskal() {
-        construirGrafoCompleto();
-        Collections.sort(aristas);
-        Map<UsuarioMusical, UsuarioMusical> padre = new HashMap<>();
-        for (UsuarioMusical u : usuarios) padre.put(u, u);
-
-        List<Arista> agm = new ArrayList<>();
-        for (Arista a : aristas) {
-            UsuarioMusical raiz1 = encontrar(padre, a.getU1());
-            UsuarioMusical raiz2 = encontrar(padre, a.getU2());
-            if (!raiz1.equals(raiz2)) {
-                agm.add(a);
-                padre.put(raiz1, raiz2);
-            }
+    public void ejecutarAlgoritmo() {
+        if (usuarios.size() < 2) {
+            grupos.clear();
+            notificarCambio();
+            return;
         }
-        return agm;
+
+        recalcularAristas();
+        grupos = construirGruposPorMST();
+        notificarCambio();
     }
 
-    private UsuarioMusical encontrar(Map<UsuarioMusical, UsuarioMusical> padre, UsuarioMusical u) {
-        if (!padre.get(u).equals(u)) {
-            padre.put(u, encontrar(padre, padre.get(u)));
-        }
-        return padre.get(u);
+    public List<UsuarioMusical> getUsuarios() {
+        return usuarios;
     }
 
-    public List<List<UsuarioMusical>> dividirEnDosGrupos() {
-        List<Arista> agm = obtenerAGMKruskal();
-        agm.sort(Collections.reverseOrder());
-        agm.remove(0); // Eliminar la arista de mayor peso
+    public List<Set<UsuarioMusical>> getGrupos() {
+        return grupos;
+    }
 
-        Map<UsuarioMusical, List<UsuarioMusical>> grupos = new HashMap<>();
-        for (UsuarioMusical u : usuarios) grupos.put(u, new ArrayList<>(List.of(u)));
+    private List<Set<UsuarioMusical>> construirGruposPorMST() {
+        // Kruskal para MST
+        List<Arista> edges = new ArrayList<>(aristas);
+        Collections.sort(edges);
 
-        for (Arista a : agm) {
-            List<UsuarioMusical> g1 = grupos.get(a.getU1());
-            List<UsuarioMusical> g2 = grupos.get(a.getU2());
-            if (g1 != g2) {
-                g1.addAll(g2);
-                for (UsuarioMusical u : g2) grupos.put(u, g1);
+        UnionFind uf = new UnionFind(usuarios.size());
+        Map<UsuarioMusical, Integer> indice = new HashMap<>();
+        for (int i = 0; i < usuarios.size(); i++) {
+            indice.put(usuarios.get(i), i);
+        }
+
+        List<Arista> mst = new ArrayList<>();
+        for (Arista e : edges) {
+            int u = indice.get(e.getU1());
+            int v = indice.get(e.getU2());
+            if (uf.find(u) != uf.find(v)) {
+                uf.union(u, v);
+                mst.add(e);
             }
         }
 
-        Set<List<UsuarioMusical>> resultado = new HashSet<>(grupos.values());
-        return new ArrayList<>(resultado);
+        // Eliminar la arista de mayor peso
+        if (!mst.isEmpty()) {
+            Arista max = Collections.max(mst);
+            mst.remove(max);
+        }
+
+        // Crear componentes (dos grupos)
+        Map<Integer, Set<UsuarioMusical>> comps = new HashMap<>();
+        UnionFind ufFinal = new UnionFind(usuarios.size());
+        for (Arista e : mst) {
+            int u = indice.get(e.getU1());
+            int v = indice.get(e.getU2());
+            ufFinal.union(u, v);
+        }
+
+        for (UsuarioMusical u : usuarios) {
+            int comp = ufFinal.find(indice.get(u));
+            comps.computeIfAbsent(comp, k -> new HashSet<>()).add(u);
+        }
+
+        return new ArrayList<>(comps.values());
+    }
+
+    public String calcularEstadisticas() {
+        if (usuarios.isEmpty()) return "No hay usuarios cargados.";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Cantidad de usuarios: ").append(usuarios.size()).append("\n\n");
+
+        for (int i = 0; i < grupos.size(); i++) {
+            Set<UsuarioMusical> grupo = grupos.get(i);
+            sb.append("Grupo ").append(i + 1).append(" (").append(grupo.size()).append(" usuarios):\n");
+            double promTango = grupo.stream().mapToInt(UsuarioMusical::getTango).average().orElse(0);
+            double promFolclore = grupo.stream().mapToInt(UsuarioMusical::getFolclore).average().orElse(0);
+            double promRock = grupo.stream().mapToInt(UsuarioMusical::getRock).average().orElse(0);
+            double promUrbano = grupo.stream().mapToInt(UsuarioMusical::getUrbano).average().orElse(0);
+
+            sb.append("  Prom Tango: ").append(String.format("%.2f", promTango)).append("\n");
+            sb.append("  Prom Folclore: ").append(String.format("%.2f", promFolclore)).append("\n");
+            sb.append("  Prom Rock: ").append(String.format("%.2f", promRock)).append("\n");
+            sb.append("  Prom Urbano: ").append(String.format("%.2f", promUrbano)).append("\n");
+
+            sb.append("  Usuarios: ").append(
+                    grupo.stream().map(UsuarioMusical::getNombre).collect(Collectors.joining(", "))
+            ).append("\n\n");
+        }
+
+        return sb.toString();
+    }
+
+    private void notificarCambio() {
+        for (Observador obs : observadores) {
+            obs.actualizar();
+        }
+    }
+
+    // clase auxiliar Union-Find 
+    private static class UnionFind {
+        private int[] parent, rank;
+
+        public UnionFind(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) parent[i] = i;
+        }
+
+        public int find(int x) {
+            if (parent[x] != x) parent[x] = find(parent[x]);
+            return parent[x];
+        }
+
+        public void union(int x, int y) {
+            int rx = find(x), ry = find(y);
+            if (rx == ry) return;
+            if (rank[rx] < rank[ry]) {
+                parent[rx] = ry;
+            } else if (rank[rx] > rank[ry]) {
+                parent[ry] = rx;
+            } else {
+                parent[ry] = rx;
+                rank[rx]++;
+            }
+        }
     }
 }
