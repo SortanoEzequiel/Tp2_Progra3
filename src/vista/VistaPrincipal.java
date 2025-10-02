@@ -3,9 +3,12 @@ package vista;
 import modelo.GrafoUsuarios;
 import modelo.Observador;
 import modelo.UsuarioMusical;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.util.List;
+import java.util.ArrayList;
+import controller.Controlador;
+
 import java.awt.*;
 
 public class VistaPrincipal extends JFrame implements Observador {
@@ -19,12 +22,10 @@ public class VistaPrincipal extends JFrame implements Observador {
     private JTextArea areaEstadisticas;
     private JButton btnAgregarUsuario;
     private JButton btnEjecutarAlgoritmo;
-
     private DefaultTableModel tablaModelo;
-    private GrafoUsuarios grafo; // referencia al modelo
+    private Controlador controlador;
 
-    public VistaPrincipal(GrafoUsuarios grafo) {
-        this.grafo = grafo;
+    public VistaPrincipal() {
         setTitle("Descubriendo Afinidades Musicales");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(700, 500);
@@ -105,22 +106,32 @@ public class VistaPrincipal extends JFrame implements Observador {
 
         tabbedPane.addTab("Estadísticas", panelEstadisticas);
     }
+  
 
-    @Override
-    public void actualizar() {
-        refrescarTabla();
-        refrescarEstadisticas();
-    }
-
-    private void refrescarTabla() {
+   
+    
+    public void mostrarUsuarios(List<UsuarioMusical> usuarios) {
         tablaModelo.setRowCount(0);
-        for (UsuarioMusical u : grafo.getUsuarios()) {
-            tablaModelo.addRow(new Object[]{u.getNombre(), u.getTango(), u.getFolclore(), u.getRock(), u.getUrbano()});
+        for (UsuarioMusical u : usuarios) {
+            tablaModelo.addRow(new Object[]{
+                u.getNombre(), u.getTango(), u.getFolclore(), u.getRock(), u.getUrbano()
+            });
         }
     }
 
-    private void refrescarEstadisticas() {
-        areaEstadisticas.setText(grafo.calcularEstadisticas());
+    public void mostrarEstadisticas(String texto) {
+        areaEstadisticas.setText(texto);
+    }
+   
+    public void setControlador(Controlador controlador) {
+        this.controlador = controlador;
+    }
+    
+    @Override
+    public void actualizar() {
+        if (controlador == null) return;
+        mostrarUsuarios(controlador.getUsuarios());
+        mostrarEstadisticas(controlador.getEstadisticas());
     }
 
     // Getters

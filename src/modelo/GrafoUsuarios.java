@@ -3,7 +3,7 @@ package modelo;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GrafoUsuarios extends Observable {
+public class GrafoUsuarios {
 
     private List<UsuarioMusical> usuarios;
     private List<Arista> aristas;
@@ -26,7 +26,6 @@ public class GrafoUsuarios extends Observable {
         recalcularAristas();
         notificarCambio();
     }
-   
 
     private void recalcularAristas() {
         aristas.clear();
