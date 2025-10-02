@@ -57,7 +57,7 @@ public class GrafoUsuarios extends Observable {
         return grupos;
     }
 
-    private List<Set<UsuarioMusical>> construirGruposPorMST() {
+    List<Set<UsuarioMusical>> construirGruposPorMST() {
         // Kruskal para MST
         List<Arista> edges = new ArrayList<>(aristas);
         Collections.sort(edges);
