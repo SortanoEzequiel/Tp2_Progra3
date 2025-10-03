@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class Controlador implements ActionListener {
 
     private static GrafoUsuarios modelo;
@@ -31,7 +33,12 @@ public class Controlador implements ActionListener {
     }
 
     private void agregarUsuario() {
+    	
         String nombre = vista.getTxtNombre().getText();
+        if (!nombre.matches("[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}")) {
+            JOptionPane.showMessageDialog(null, "El nombre debe tener al menos 2 letras y solo contener caracteres válidos.");
+            return;
+        }
         int tango = (int) vista.getComboTango().getSelectedItem();
         int folclore = (int) vista.getComboFolclore().getSelectedItem();
         int rock = (int) vista.getComboRock().getSelectedItem();
