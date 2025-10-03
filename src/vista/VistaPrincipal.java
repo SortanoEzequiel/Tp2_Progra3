@@ -1,12 +1,10 @@
 package vista;
 
-import modelo.GrafoUsuarios;
 import modelo.Observador;
 import modelo.UsuarioMusical;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
-import java.util.ArrayList;
 import controller.Controlador;
 
 import java.awt.*;
