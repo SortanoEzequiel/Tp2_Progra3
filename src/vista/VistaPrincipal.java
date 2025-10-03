@@ -3,9 +3,12 @@ package vista;
 import modelo.GrafoUsuarios;
 import modelo.Observador;
 import modelo.UsuarioMusical;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.util.List;
+import java.util.ArrayList;
+import controller.Controlador;
+
 import java.awt.*;
 
 public class VistaPrincipal extends JFrame implements Observador {
@@ -19,12 +22,15 @@ public class VistaPrincipal extends JFrame implements Observador {
     private JTextArea areaEstadisticas;
     private JButton btnAgregarUsuario;
     private JButton btnEjecutarAlgoritmo;
-
     private DefaultTableModel tablaModelo;
-    private GrafoUsuarios grafo; // referencia al modelo
+    private Controlador controlador;
 
-    public VistaPrincipal(GrafoUsuarios grafo) {
-        this.grafo = grafo;
+    public VistaPrincipal() {
+    	iniciarComponentes();
+
+    }
+    
+    private void iniciarComponentes() {
         setTitle("Descubriendo Afinidades Musicales");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(700, 500);
@@ -33,67 +39,79 @@ public class VistaPrincipal extends JFrame implements Observador {
         JTabbedPane tabbedPane = new JTabbedPane();
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
-        // --- Formulario ---
-        JPanel panelFormulario = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.WEST;
+        tabbedPane.addTab("Formulario", crearPanelFormulario());
+        tabbedPane.addTab("Usuarios", crearPanelUsuarios());
+        tabbedPane.addTab("Estadísticas", crearPanelEstadisticas());
+    }
+  
 
-        JLabel lblNombre = new JLabel("Nombre:");
-        gbc.gridx = 0; gbc.gridy = 0;
-        panelFormulario.add(lblNombre, gbc);
+    private JComboBox<Integer> crearComboInteres() {
+        return new JComboBox<>(new Integer[]{1,2,3,4,5});
+    }
 
-        txtNombre = new JTextField(20);
-        gbc.gridx = 1; gbc.gridy = 0;
-        panelFormulario.add(txtNombre, gbc);
+    private JPanel crearPanelFormulario() {
+    JPanel panelFormulario = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(5, 5, 5, 5);
+    gbc.anchor = GridBagConstraints.WEST;
 
-        JLabel lblTango = new JLabel("Interés en Tango (1-5):");
-        gbc.gridx = 0; gbc.gridy = 1;
-        panelFormulario.add(lblTango, gbc);
+    JLabel lblNombre = new JLabel("Nombre:");
+    gbc.gridx = 0; gbc.gridy = 0;
+    panelFormulario.add(lblNombre, gbc);
 
-        comboTango = new JComboBox<>(new Integer[]{1,2,3,4,5});
-        gbc.gridx = 1; gbc.gridy = 1;
-        panelFormulario.add(comboTango, gbc);
+    txtNombre = new JTextField(20);
+    gbc.gridx = 1; gbc.gridy = 0;
+    panelFormulario.add(txtNombre, gbc);
 
-        JLabel lblFolclore = new JLabel("Interés en Folclore (1-5):");
-        gbc.gridx = 0; gbc.gridy = 2;
-        panelFormulario.add(lblFolclore, gbc);
+    JLabel lblTango = new JLabel("Interés en Tango (1-5):");
+    gbc.gridx = 0; gbc.gridy = 1;
+    panelFormulario.add(lblTango, gbc);
 
-        comboFolclore = new JComboBox<>(new Integer[]{1,2,3,4,5});
-        gbc.gridx = 1; gbc.gridy = 2;
-        panelFormulario.add(comboFolclore, gbc);
+    comboTango = crearComboInteres();
+    gbc.gridx = 1; gbc.gridy = 1;
+    panelFormulario.add(comboTango, gbc);
 
-        JLabel lblRock = new JLabel("Interés en Rock Nacional (1-5):");
-        gbc.gridx = 0; gbc.gridy = 3;
-        panelFormulario.add(lblRock, gbc);
+    JLabel lblFolclore = new JLabel("Interés en Folclore (1-5):");
+    gbc.gridx = 0; gbc.gridy = 2;
+    panelFormulario.add(lblFolclore, gbc);
 
-        comboRock = new JComboBox<>(new Integer[]{1,2,3,4,5});
-        gbc.gridx = 1; gbc.gridy = 3;
-        panelFormulario.add(comboRock, gbc);
+    comboFolclore = crearComboInteres();
+    gbc.gridx = 1; gbc.gridy = 2;
+    panelFormulario.add(comboFolclore, gbc);
 
-        JLabel lblUrbano = new JLabel("Interés en Género Urbano (1-5):");
-        gbc.gridx = 0; gbc.gridy = 4;
-        panelFormulario.add(lblUrbano, gbc);
+    JLabel lblRock = new JLabel("Interés en Rock Nacional (1-5):");
+    gbc.gridx = 0; gbc.gridy = 3;
+    panelFormulario.add(lblRock, gbc);
 
-        comboUrbano = new JComboBox<>(new Integer[]{1,2,3,4,5});
-        gbc.gridx = 1; gbc.gridy = 4;
-        panelFormulario.add(comboUrbano, gbc);
+    comboRock = crearComboInteres();
+    gbc.gridx = 1; gbc.gridy = 3;
+    panelFormulario.add(comboRock, gbc);
 
-        btnAgregarUsuario = new JButton("Agregar Usuario");
-        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
-        panelFormulario.add(btnAgregarUsuario, gbc);
+    JLabel lblUrbano = new JLabel("Interés en Género Urbano (1-5):");
+    gbc.gridx = 0; gbc.gridy = 4;
+    panelFormulario.add(lblUrbano, gbc);
 
-        tabbedPane.addTab("Formulario", panelFormulario);
+    comboUrbano = crearComboInteres();
+    gbc.gridx = 1; gbc.gridy = 4;
+    panelFormulario.add(comboUrbano, gbc);
 
-        // --- Usuarios ---
-        JPanel panelUsuarios = new JPanel(new BorderLayout());
-        tablaModelo = new DefaultTableModel(new Object[]{"Nombre", "Tango", "Folclore", "Rock", "Urbano"}, 0);
-        tablaUsuarios = new JTable(tablaModelo);
-        JScrollPane scrollUsuarios = new JScrollPane(tablaUsuarios);
-        panelUsuarios.add(scrollUsuarios, BorderLayout.CENTER);
-        tabbedPane.addTab("Usuarios", panelUsuarios);
-
-        // --- Estadísticas ---
+    btnAgregarUsuario = new JButton("Agregar Usuario");
+    gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
+    panelFormulario.add(btnAgregarUsuario, gbc);
+    
+    return panelFormulario;
+   }
+    
+    private JPanel crearPanelUsuarios() {
+    JPanel panelUsuarios = new JPanel(new BorderLayout());
+    tablaModelo = new DefaultTableModel(new Object[]{"Nombre", "Tango", "Folclore", "Rock", "Urbano"}, 0);
+    tablaUsuarios = new JTable(tablaModelo);
+    JScrollPane scrollUsuarios = new JScrollPane(tablaUsuarios);
+    panelUsuarios.add(scrollUsuarios, BorderLayout.CENTER);
+    return panelUsuarios;
+ }
+    
+    private JPanel crearPanelEstadisticas() {
         JPanel panelEstadisticas = new JPanel(new BorderLayout());
         areaEstadisticas = new JTextArea();
         areaEstadisticas.setEditable(false);
@@ -103,24 +121,31 @@ public class VistaPrincipal extends JFrame implements Observador {
         btnEjecutarAlgoritmo = new JButton("Ejecutar Algoritmo");
         panelEstadisticas.add(btnEjecutarAlgoritmo, BorderLayout.SOUTH);
 
-        tabbedPane.addTab("Estadísticas", panelEstadisticas);
-    }
+        return panelEstadisticas;
+        }
 
-    @Override
-    public void actualizar() {
-        refrescarTabla();
-        refrescarEstadisticas();
-    }
-
-    private void refrescarTabla() {
+    public void mostrarUsuarios(List<UsuarioMusical> usuarios) {
         tablaModelo.setRowCount(0);
-        for (UsuarioMusical u : grafo.getUsuarios()) {
-            tablaModelo.addRow(new Object[]{u.getNombre(), u.getTango(), u.getFolclore(), u.getRock(), u.getUrbano()});
+        for (UsuarioMusical u : usuarios) {
+            tablaModelo.addRow(new Object[]{
+                u.getNombre(), u.getTango(), u.getFolclore(), u.getRock(), u.getUrbano()
+            });
         }
     }
 
-    private void refrescarEstadisticas() {
-        areaEstadisticas.setText(grafo.calcularEstadisticas());
+    public void mostrarEstadisticas(String texto) {
+        areaEstadisticas.setText(texto);
+    }
+   
+    public void setControlador(Controlador controlador) {
+        this.controlador = controlador;
+    }
+    
+    @Override
+    public void actualizar() {
+        if (controlador == null) return;
+        mostrarUsuarios(controlador.getUsuarios());
+        mostrarEstadisticas(controlador.getEstadisticas());
     }
 
     // Getters
