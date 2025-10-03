@@ -19,7 +19,6 @@ public class PanelUsuarios extends JPanel {
         add(scrollUsuarios, BorderLayout.CENTER);
     }
 
-    // Métodos para manejar la tabla
     public void limpiarTabla() {
         tablaModelo.setRowCount(0);
     }
