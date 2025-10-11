@@ -12,12 +12,12 @@ public class PanelEstadisticas extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // 🔹 Título arriba
+        
         JLabel titulo = new JLabel("📊 Estadísticas de Afinidades", SwingConstants.CENTER);
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 16));
         add(titulo, BorderLayout.NORTH);
 
-        // 🔹 Área de estadísticas con scroll
+        
         areaEstadisticas = new JTextArea();
         areaEstadisticas.setEditable(false);
         areaEstadisticas.setFont(new Font("Consolas", Font.PLAIN, 13));
@@ -28,7 +28,7 @@ public class PanelEstadisticas extends JPanel {
         scrollEstadisticas.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         add(scrollEstadisticas, BorderLayout.CENTER);
 
-        // 🔹 Panel inferior con botón centrado
+      
         JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btnEjecutarAlgoritmo = new JButton("▶ Ejecutar Algoritmo");
         btnEjecutarAlgoritmo.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -41,12 +41,12 @@ public class PanelEstadisticas extends JPanel {
         add(panelBoton, BorderLayout.SOUTH);
     }
 
-    // Métodos de la vista
+   
     public void mostrarEstadisticas(String texto) {
         areaEstadisticas.setText(texto);
     }
 
-    // Getters
+    
     public JTextArea getAreaEstadisticas() { return areaEstadisticas; }
     public JButton getBtnEjecutarAlgoritmo() { return btnEjecutarAlgoritmo; }
 }
