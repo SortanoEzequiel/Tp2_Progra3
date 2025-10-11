@@ -11,19 +11,19 @@ public class PanelEstadisticas extends JPanel {
     private JButton btnEjecutarAlgoritmo;
 
     public PanelEstadisticas() {
-        // Fondo degradado personalizado
+        
         setLayout(new BorderLayout(15, 15));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         setBackground(new Color(240, 244, 250));
 
-        // === Título ===
+        
         JLabel titulo = new JLabel("📊 Estadísticas de Afinidades", SwingConstants.CENTER);
         titulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 20));
         titulo.setForeground(new Color(50, 60, 80));
         titulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         add(titulo, BorderLayout.NORTH);
 
-        // === Área de texto ===
+       
         areaEstadisticas = new JTextArea();
         areaEstadisticas.setEditable(false);
         areaEstadisticas.setFont(new Font("Consolas", Font.PLAIN, 13));
@@ -33,7 +33,7 @@ public class PanelEstadisticas extends JPanel {
         areaEstadisticas.setLineWrap(true);
         areaEstadisticas.setWrapStyleWord(true);
 
-        // Bordes y sombreado sutil para el área
+        
         JScrollPane scrollEstadisticas = new JScrollPane(areaEstadisticas);
         scrollEstadisticas.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(210, 210, 210), 1),
@@ -43,7 +43,6 @@ public class PanelEstadisticas extends JPanel {
         scrollEstadisticas.setOpaque(true);
         add(scrollEstadisticas, BorderLayout.CENTER);
 
-        // === Panel inferior con botón ===
         JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBoton.setOpaque(false);
 
@@ -56,7 +55,7 @@ public class PanelEstadisticas extends JPanel {
         btnEjecutarAlgoritmo.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnEjecutarAlgoritmo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Efecto hover moderno
+       
         btnEjecutarAlgoritmo.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -73,7 +72,7 @@ public class PanelEstadisticas extends JPanel {
         add(panelBoton, BorderLayout.SOUTH);
     }
 
-    // === Métodos públicos ===
+   
     public void mostrarEstadisticas(String texto) {
         areaEstadisticas.setText(texto);
     }
@@ -81,7 +80,7 @@ public class PanelEstadisticas extends JPanel {
     public JTextArea getAreaEstadisticas() { return areaEstadisticas; }
     public JButton getBtnEjecutarAlgoritmo() { return btnEjecutarAlgoritmo; }
 
-    // === Fondo degradado opcional ===
+    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
