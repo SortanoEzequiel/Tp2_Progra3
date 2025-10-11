@@ -77,13 +77,13 @@ public class GrafoUsuarios {
             }
         }
 
-        // Eliminar la arista de mayor peso
+      
         if (!mst.isEmpty()) {
             Arista max = Collections.max(mst);
             mst.remove(max);
         }
 
-        // Crear componentes (dos grupos)
+   
         Map<Integer, Set<UsuarioMusical>> comps = new HashMap<>();
         UnionFind ufFinal = new UnionFind(usuarios.size());
         for (Arista e : mst) {
@@ -112,32 +112,44 @@ public class GrafoUsuarios {
         }
     }
 
-    // clase auxiliar Union-Find 
+ 
     private static class UnionFind {
-        private int[] parent, rank;
+        private int[] padre;       
+        private int[] altura;      
 
-        public UnionFind(int n) {
-            parent = new int[n];
-            rank = new int[n];
-            for (int i = 0; i < n; i++) parent[i] = i;
+        public UnionFind(int cantidadElementos) {
+            padre = new int[cantidadElementos];
+            altura = new int[cantidadElementos];
+            for (int i = 0; i < cantidadElementos; i++) {
+                padre[i] = i; 
+            }
         }
 
-        public int find(int x) {
-            if (parent[x] != x) parent[x] = find(parent[x]);
-            return parent[x];
+     
+        public int find(int elemento) {
+            if (padre[elemento] != elemento) {
+                padre[elemento] = find(padre[elemento]); 
+            }
+            return padre[elemento];
         }
 
-        public void union(int x, int y) {
-            int rx = find(x), ry = find(y);
-            if (rx == ry) return;
-            if (rank[rx] < rank[ry]) {
-                parent[rx] = ry;
-            } else if (rank[rx] > rank[ry]) {
-                parent[ry] = rx;
+  
+        public void union(int elementoA, int elementoB) {
+            int raizA = find(elementoA);
+            int raizB = find(elementoB);
+
+            if (raizA == raizB) return; 
+
+            // Unión por altura (rank)
+            if (altura[raizA] < altura[raizB]) {
+                padre[raizA] = raizB;
+            } else if (altura[raizA] > altura[raizB]) {
+                padre[raizB] = raizA;
             } else {
-                parent[ry] = rx;
-                rank[rx]++;
+                padre[raizB] = raizA;
+                altura[raizA]++;
             }
         }
     }
+
 }
