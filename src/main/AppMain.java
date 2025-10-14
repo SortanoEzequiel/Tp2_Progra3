@@ -1,6 +1,6 @@
 package main;
 
-import controller.Controlador;
+import controlador.Controlador;
 import modelo.GrafoUsuarios;
 import vista.VistaPrincipal;
 

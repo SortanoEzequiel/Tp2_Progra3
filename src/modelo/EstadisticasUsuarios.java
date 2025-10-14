@@ -21,10 +21,10 @@ public class EstadisticasUsuarios {
             double promRock = grupo.stream().mapToInt(UsuarioMusical::getRock).average().orElse(0);
             double promUrbano = grupo.stream().mapToInt(UsuarioMusical::getUrbano).average().orElse(0);
 
-            sb.append("  Tango: " + "%").append(String.format("%.2f", promTango)).append("\n");
-            sb.append("  Folclore: " + "%").append(String.format("%.2f", promFolclore)).append("\n");
-            sb.append("  Rock: " + "%").append(String.format("%.2f", promRock)).append("\n");
-            sb.append("  Urbano: " + "%").append(String.format("%.2f", promUrbano)).append("\n");
+            sb.append("  Promedio Tango: " ).append(String.format("%.2f", promTango)).append("\n");
+            sb.append("  Promedio Folclore: ").append(String.format("%.2f", promFolclore)).append("\n");
+            sb.append("  Promedio Rock: ").append(String.format("%.2f", promRock)).append("\n");
+            sb.append("  Promedio Urbano: ").append(String.format("%.2f", promUrbano)).append("\n");
 
             sb.append("  Usuarios: ").append(
                     grupo.stream().map(UsuarioMusical::getNombre).collect(Collectors.joining(", "))

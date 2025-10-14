@@ -1,4 +1,4 @@
-package controller;
+package controlador;
 
 import modelo.GrafoUsuarios;
 import modelo.UsuarioMusical;

@@ -4,9 +4,10 @@ import modelo.Observador;
 import modelo.UsuarioMusical;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.util.List;
-import controller.Controlador;
 
+import controlador.Controlador;
+
+import java.util.List;
 import java.awt.*;
 
 public class VistaPrincipal extends JFrame implements Observador {
