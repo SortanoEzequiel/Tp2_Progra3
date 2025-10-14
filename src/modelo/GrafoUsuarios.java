@@ -26,6 +26,8 @@ public class GrafoUsuarios {
         recalcularAristas();
         notificarCambio();
     }
+    
+   
 
     private void recalcularAristas() {
         aristas.clear();
@@ -35,6 +37,12 @@ public class GrafoUsuarios {
             }
         }
     }
+    private void notificarCambio() {
+        for (Observador obs : observadores) {
+            obs.actualizar();
+        }
+    }
+
 
     public void ejecutarAlgoritmo() {
         if (usuarios.size() < 2) {
@@ -47,6 +55,7 @@ public class GrafoUsuarios {
         grupos = construirGruposPorMST();
         notificarCambio();
     }
+    
 
     public List<UsuarioMusical> getUsuarios() {
         return usuarios;
@@ -61,7 +70,7 @@ public class GrafoUsuarios {
         List<Arista> edges = new ArrayList<>(aristas);
         Collections.sort(edges);
 
-        UnionFind uf = new UnionFind(usuarios.size());
+        EncontrarUnion eu = new EncontrarUnion(usuarios.size());
         Map<UsuarioMusical, Integer> indice = new HashMap<>();
         for (int i = 0; i < usuarios.size(); i++) {
             indice.put(usuarios.get(i), i);
@@ -71,8 +80,8 @@ public class GrafoUsuarios {
         for (Arista e : edges) {
             int u = indice.get(e.getU1());
             int v = indice.get(e.getU2());
-            if (uf.find(u) != uf.find(v)) {
-                uf.union(u, v);
+            if (eu.encontrar(u) != eu.encontrar(v)) {
+                eu.union(u, v);
                 mst.add(e);
             }
         }
@@ -85,7 +94,7 @@ public class GrafoUsuarios {
 
    
         Map<Integer, Set<UsuarioMusical>> comps = new HashMap<>();
-        UnionFind ufFinal = new UnionFind(usuarios.size());
+        EncontrarUnion ufFinal = new EncontrarUnion(usuarios.size());
         for (Arista e : mst) {
             int u = indice.get(e.getU1());
             int v = indice.get(e.getU2());
@@ -93,7 +102,7 @@ public class GrafoUsuarios {
         }
 
         for (UsuarioMusical u : usuarios) {
-            int comp = ufFinal.find(indice.get(u));
+            int comp = ufFinal.encontrar(indice.get(u));
             comps.computeIfAbsent(comp, k -> new HashSet<>()).add(u);
         }
 
@@ -106,18 +115,13 @@ public class GrafoUsuarios {
         return EstadisticasUsuarios.generarReporte(grupos, usuarios);
     }
  
-    private void notificarCambio() {
-        for (Observador obs : observadores) {
-            obs.actualizar();
-        }
-    }
-
+    
  
-    private static class UnionFind {
+    private static class EncontrarUnion {
         private int[] padre;       
         private int[] altura;      
 
-        public UnionFind(int cantidadElementos) {
+        public EncontrarUnion(int cantidadElementos) {
             padre = new int[cantidadElementos];
             altura = new int[cantidadElementos];
             for (int i = 0; i < cantidadElementos; i++) {
@@ -126,17 +130,17 @@ public class GrafoUsuarios {
         }
 
      
-        public int find(int elemento) {
+        public int encontrar(int elemento) {
             if (padre[elemento] != elemento) {
-                padre[elemento] = find(padre[elemento]); 
+                padre[elemento] = encontrar(padre[elemento]); 
             }
             return padre[elemento];
         }
 
   
         public void union(int elementoA, int elementoB) {
-            int raizA = find(elementoA);
-            int raizB = find(elementoB);
+            int raizA = encontrar(elementoA);
+            int raizB = encontrar(elementoB);
 
             if (raizA == raizB) return; 
 
