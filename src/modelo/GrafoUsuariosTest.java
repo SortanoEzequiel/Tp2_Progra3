@@ -51,17 +51,7 @@ public class GrafoUsuariosTest {
 	    	assertTrue(grafo.getUsuarios().contains(nuevoUser));
 	    }
 	    
-	    @Test
-	    public void testUsuariosEnGrupos() {
-	    	//SetUp
-	    	cuatroUsuarios();
-	    	
-	    	//Excersice
-	    	grafo.ejecutarAlgoritmo();
-	    	
-	    	//Verify
-	    	
-	    }
+	    
 	    
 	    @Test
 	    public void testCantidadDeGrupos() {
