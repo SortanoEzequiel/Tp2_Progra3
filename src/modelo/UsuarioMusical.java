@@ -35,11 +35,11 @@ public class UsuarioMusical {
         return urbano;
     }
 
-    // cálculo de similaridad con otro usuario
-    public int similaridad(UsuarioMusical otro) {
-        return Math.abs(this.tango - otro.tango)
-             + Math.abs(this.folclore - otro.folclore)
-             + Math.abs(this.rock - otro.rock)
-             + Math.abs(this.urbano - otro.urbano);
+    
+    public int similaridad(UsuarioMusical otroUsuario) {
+        return Math.abs(this.tango - otroUsuario.tango)
+             + Math.abs(this.folclore - otroUsuario.folclore)
+             + Math.abs(this.rock - otroUsuario.rock)
+             + Math.abs(this.urbano - otroUsuario.urbano);
     }
 }

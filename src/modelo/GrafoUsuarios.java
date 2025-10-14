@@ -7,7 +7,7 @@ public class GrafoUsuarios {
 
     private List<UsuarioMusical> usuarios;
     private List<Arista> aristas;
-    private List<Set<UsuarioMusical>> grupos; // dos grupos resultantes
+    private List<Set<UsuarioMusical>> grupos; 
     private List<Observador> observadores;
 
     public GrafoUsuarios() {
@@ -66,47 +66,47 @@ public class GrafoUsuarios {
     }
 
     List<Set<UsuarioMusical>> construirGruposPorMST() {
-        // Kruskal para MST
-        List<Arista> edges = new ArrayList<>(aristas);
-        Collections.sort(edges);
+        // Kruskal
+        List<Arista> todasLasAristas = new ArrayList<>(aristas);
+        Collections.sort(todasLasAristas);
 
-        EncontrarUnion eu = new EncontrarUnion(usuarios.size());
+        EncontrarUnion unionInicial = new EncontrarUnion(usuarios.size());
         Map<UsuarioMusical, Integer> indice = new HashMap<>();
         for (int i = 0; i < usuarios.size(); i++) {
             indice.put(usuarios.get(i), i);
         }
 
-        List<Arista> mst = new ArrayList<>();
-        for (Arista e : edges) {
-            int u = indice.get(e.getU1());
-            int v = indice.get(e.getU2());
-            if (eu.encontrar(u) != eu.encontrar(v)) {
-                eu.union(u, v);
-                mst.add(e);
+        List<Arista> arbolMST = new ArrayList<>();
+        for (Arista arista : todasLasAristas) {
+            int u1 = indice.get(arista.getU1());
+            int u2 = indice.get(arista.getU2());
+            if (unionInicial.encontrar(u1) != unionInicial.encontrar(u2)) {
+            	unionInicial.union(u1, u2);
+                arbolMST.add(arista);
             }
         }
 
       
-        if (!mst.isEmpty()) {
-            Arista max = Collections.max(mst);
-            mst.remove(max);
+        if (!arbolMST.isEmpty()) {
+            Arista aristaMaxima = Collections.max(arbolMST);
+            arbolMST.remove(aristaMaxima);
         }
 
    
-        Map<Integer, Set<UsuarioMusical>> comps = new HashMap<>();
-        EncontrarUnion ufFinal = new EncontrarUnion(usuarios.size());
-        for (Arista e : mst) {
-            int u = indice.get(e.getU1());
-            int v = indice.get(e.getU2());
-            ufFinal.union(u, v);
+        Map<Integer, Set<UsuarioMusical>> componentes = new HashMap<>();
+        EncontrarUnion unionFinal = new EncontrarUnion(usuarios.size());
+        for (Arista arista : arbolMST) {
+            int u1 = indice.get(arista.getU1());
+            int u2 = indice.get(arista.getU2());
+            unionFinal.union(u1, u2);
         }
 
-        for (UsuarioMusical u : usuarios) {
-            int comp = ufFinal.encontrar(indice.get(u));
-            comps.computeIfAbsent(comp, k -> new HashSet<>()).add(u);
+        for (UsuarioMusical um : usuarios) {
+            int componente = unionFinal.encontrar(indice.get(um));
+            componentes.computeIfAbsent(componente, k -> new HashSet<>()).add(um);
         }
 
-        return new ArrayList<>(comps.values());
+        return new ArrayList<>(componentes.values());
     }
 
     public String calcularEstadisticas() {

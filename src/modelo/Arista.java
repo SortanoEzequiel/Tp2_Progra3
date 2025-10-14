@@ -24,7 +24,7 @@ public class Arista implements Comparable<Arista> {
     }
 
     @Override
-    public int compareTo(Arista o) {
-        return Integer.compare(this.peso, o.peso);
+    public int compareTo(Arista otraArista) {
+        return Integer.compare(this.peso, otraArista.peso);
     }
 }
