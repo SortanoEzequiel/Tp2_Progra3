@@ -51,7 +51,7 @@ public class Controlador implements ActionListener {
 
         UsuarioMusical usuario = new UsuarioMusical(nombre, tango, folclore, rock, urbano);
         modelo.agregarUsuario(usuario);
-
+       
         // Resetear campos
         form.getTxtNombre().setText("");
         form.getComboTango().setSelectedIndex(0);

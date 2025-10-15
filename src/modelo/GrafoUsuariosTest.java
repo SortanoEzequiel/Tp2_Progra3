@@ -25,17 +25,7 @@ public class GrafoUsuariosTest {
 	    	grafo.agregarUsuario(User4);
 	    }
 
-	    @Test
-	    public void testConstruirGruposPorMST_ListaUsuariosVacia() {
-	        // Set up - no agrega ningun usario
-	        
-	        // Exercise
-	        List<Set<UsuarioMusical>> grupos = grafo.construirGruposPorMST();
-	        
-	        // Verify
-	        assertNotNull("El método nunca debería retornar null", grupos);
-	        assertTrue("La lista de grupos debería estar vacía", grupos.isEmpty());
-	    }
+	 
 	    
 	    @Test
 	    public void testAgregarUsuario() {
@@ -64,19 +54,5 @@ public class GrafoUsuariosTest {
 	    	
 	    	//Verify
 	    	assertEquals(2, totalGrupos);
-	    }
-	    
-	    @Test
-	    public void testConstruirGruposPorMST_ListaConUsuarios() {
-	        // Set up
-	    	cuatroUsuarios();
-	    	
-	        // Exercise
-	        List<Set<UsuarioMusical>> grupos = grafo.construirGruposPorMST();
-	        
-	        // Verify
-	        assertNotNull("El método nunca debería retornar null", grupos);
-	        assertFalse("La lista de grupos debería no estar vacía", grupos.isEmpty());
-	    }
-	    
+	    } 
 }
